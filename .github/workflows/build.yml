@@ -26,34 +26,20 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Decode Keystore
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Generate Keystore
         run: |
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 --decode > ${{ github.workspace }}/keystore.jks
-            echo "Keystore decoded successfully"
-          else
-            echo "No keystore found in secrets, skipping release build"
-          fi
+          keytool -genkeypair -v -keystore keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias autoonceclick -storepass AutoOnceClick2024! -keypass AutoOnceClick2024! -dname "CN=AutoOnceClick, OU=Dev, O=AutoOnceClick, L=Beijing, ST=Beijing, C=CN"
 
       - name: Build Release APK
         env:
           KEYSTORE_FILE: ${{ github.workspace }}/keystore.jks
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: |
-          if [ -f keystore.jks ]; then
-            gradle assembleRelease --stacktrace
-          else
-            echo "No keystore, building debug only"
-            gradle assembleDebug --stacktrace
-          fi
+          KEYSTORE_PASSWORD: AutoOnceClick2024!
+          KEY_ALIAS: autoonceclick
+          KEY_PASSWORD: AutoOnceClick2024!
+        run: gradle assembleRelease --stacktrace
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
-        if: success() && hashFiles('app/build/outputs/apk/release/*.apk') != ''
         with:
           name: app-release.apk
           path: app/build/outputs/apk/release/*.apk
