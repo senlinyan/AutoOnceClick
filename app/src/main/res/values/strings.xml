@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AutoOnceClick</string>
+    <string name="accessibility_service_name">AutoOnceClick 自动点击服务</string>
+    <string name="accessibility_service_description">在指定时间自动点击屏幕指定坐标。</string>
+</resources>
