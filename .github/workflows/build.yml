@@ -26,6 +26,13 @@ jobs:
         with:
           gradle-version: '8.9'
 
+      - name: Generate Keystore (TEMPORARY)
+        run: |
+          keytool -genkeypair -v -keystore keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias autoonceclick -storepass AutoOnceClick2024! -keypass AutoOnceClick2024! -dname "CN=AutoOnceClick, OU=Dev, O=AutoOnceClick, L=Beijing, ST=Beijing, C=CN"
+          echo "=== KEYSTORE BASE64 START ==="
+          base64 keystore.jks
+          echo "=== KEYSTORE BASE64 END ==="
+
       - name: Decode Keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
